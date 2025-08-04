@@ -1,7 +1,7 @@
-# gamecards
-遊戲王卡片搜尋
+這是一個遊戲王卡圖搜尋網站
+可以依照使用者上傳的圖片辨識是哪些卡
 
-gamecards/
+YGOImagerecognition/
 ├── app.py                  # ✅ 主 Flask 程式
 ├── cache.npz               # ✅ 特徵快取，放根目錄合適
 ├── cards/                  # ✅ 卡牌資料庫
