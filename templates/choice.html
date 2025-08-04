@@ -1,0 +1,154 @@
+{% extends "index.html" %}
+
+{% block title %}⌕ 自行選擇{% endblock %}
+
+{% block filter %}{% endblock %}
+
+{% block content %}
+<h2 style="padding: 0rem 0rem 1rem 2rem; font-size: large;">自行選擇想查詢的卡片資訊</h2>
+<div id="choiceContainer">
+  <img id="choiceImage" src="/uploads/boxed.jpg">
+  <img id="hoverPreview">
+</div>
+
+<style>
+  main.page-choice {
+    background: linear-gradient(135deg, #181c2f 0%, #2d3350 30%, #232946 50%, #1a1a2e 100%);
+    color: #dff9ff;
+    font-family: "Orbitron", sans-serif;
+    height: 1500%;
+    padding: 2rem;
+  }
+</style>
+
+<script>
+  const image = document.getElementById("choiceImage");
+  const container = document.getElementById("choiceContainer");
+  const popup = document.getElementById("hoverPreview");
+  const boxes = JSON.parse('{{ boxes_json | safe }}').predictions;
+
+  image.onload = () => {
+    const scaleX = image.clientWidth / image.naturalWidth;
+    const scaleY = image.clientHeight / image.naturalHeight;
+
+    boxes.forEach((box, index) => {
+      const x = (box.x - box.width / 2) * scaleX;
+      const y = (box.y - box.height / 2) * scaleY;
+      const w = box.width * scaleX;
+      const h = box.height * scaleY;
+
+      const div = document.createElement("div");
+      div.className = "bbox";
+      Object.assign(div.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+        width: `${w}px`,
+        height: `${h}px`
+      });
+
+      div.onmouseenter = (e) => {
+        popup.src = `/uploads/crop_${index}.jpg?t=${Date.now()}`;
+        popup.style.display = "block";
+        popup.style.left = `${e.pageX + 20}px`;
+        popup.style.top = `${e.pageY + 20}px`;
+      };
+      div.onmousemove = (e) => {
+        popup.style.left = `${e.pageX + 20}px`;
+        popup.style.top = `${e.pageY + 20}px`;
+      };
+      div.onmouseleave = () => {
+        popup.style.display = "none";
+      };
+
+      div.onclick = () => {
+        // Hide UI elements
+        image.style.display = "none";
+        popup.style.display = "none";
+        document.querySelector("h2").style.display = "none";
+        document.querySelectorAll(".bbox").forEach(box => {
+          box.style.display = "none";
+        });
+
+        // Show loading message container
+        const statusBox = document.createElement("div");
+        statusBox.id = "resultBox";
+        statusBox.innerHTML = `<span style="color:#00e0ff; font-size: 20px;">🔍 正在辨識中，請稍候...</span>`;
+        statusBox.style.marginTop = "0px";
+        // statusBox.style.textAlign = "center";
+        container.appendChild(statusBox);
+
+        // Fetch match result
+        fetch("/match_choice", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            index
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.images_html && data.text_html) {
+            statusBox.innerHTML = `
+              <h2 style="padding: 0rem 0rem 1.5rem 2rem; font-size: large;">這張卡片的資訊</h2>
+              <div class="card-list single-column">
+                <div class="card-item">
+                  <div class="card-images">
+                    ${data.images_html}
+                  </div>
+                  <div class="card-text" id="textBlock">
+                    ${data.text_html}
+                    <i id="priceLoading" style="color:gray;">🔍 正在查詢價格...</i>
+                  </div>
+                </div>
+              </div>`;
+
+            // 價格查詢部分：使用 data.card_name_jp 發送請求
+            if (data.card_name_jp) {
+              fetch('/get_price', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  card_name_jp: data.card_name_jp
+                })
+              })
+              .then(res => res.json())
+              .then(priceData => {
+                const textBlock = document.getElementById('textBlock');
+                const priceLoading = document.getElementById('priceLoading');
+                if (textBlock && priceData.price_html) {
+                  if (priceLoading) priceLoading.remove();
+                  textBlock.innerHTML += priceData.price_html;
+                }
+              })
+              .catch(err => {
+                console.warn("⚠️ 價格查詢失敗", err);
+                const priceLoading = document.getElementById('priceLoading');
+                if (priceLoading) {
+                  priceLoading.innerHTML = "⚠️ 價格查詢失敗";
+                  priceLoading.style.color = "orange";
+                }
+              });
+            }
+
+          } else {
+            statusBox.innerHTML = `<span style="color:red; font-size: 20px;">❌ 辨識失敗，請重試</span>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          statusBox.innerHTML = `<span style="color:red; font-size: 20px;">❌ 傳送錯誤</span>`;
+        });
+      };
+      container.appendChild(div);
+    });
+  };
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hint.js') }}"></script>
+{% endblock %}

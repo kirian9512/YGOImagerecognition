@@ -1,0 +1,10 @@
+flask
+opencv-python
+numpy
+faiss-cpu
+tqdm
+inference-sdk
+werkzeug
+webdriver-manager
+selenium
+requests

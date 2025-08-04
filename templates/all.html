@@ -1,0 +1,68 @@
+{% extends "index.html" %}
+
+{% block title %}⌕ 全部顯示{% endblock %}
+
+{% block filter %}
+<div class="filter-bar">
+  <h2 class="filter-h2">卡片類型</h2>
+  <div class="button-group">
+    <button onclick="filterCards(this, '全部')" class="active">全部</button>
+    <button onclick="filterCards(this, '同步')">同步</button>
+    <button onclick="filterCards(this, '超量')">超量</button>
+    <button onclick="filterCards(this, '融合')">融合</button>
+    <button onclick="filterCards(this, '連結')">連結</button>
+    <button onclick="filterCards(this, '魔法')">魔法</button>
+    <button onclick="filterCards(this, '陷阱')">陷阱</button>
+    <button onclick="filterCards(this, '效果')">效果</button>
+    <button onclick="filterCards(this, '通常')">通常</button>
+    <button onclick="filterCards(this, '儀式')">儀式</button>
+    <button onclick="filterCards(this, '靈擺')">靈擺</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="all-cards">
+  <!-- <h2>多卡辨識結果</h2> -->
+
+  <div id="cardResult">
+    <p style="color:#00e0ff; font-size: 20px;">🔍 正在辨識中，請稍候...</p>
+    <!-- <div class="card-list">
+
+      <div class="card-item">
+        <div class="card-images">
+          <img src="https://salix5.github.io/query-data/pics/20129614.jpg" alt="圖片">
+        </div>
+        <div class="card-text">
+          <p><strong>1 張</strong></p>
+          <br>中文名: 童話動物 小兔子 <br>日文名: メルフィー・ラビィ <br>卡號: 20129614 <br>類型: 怪獸/通常 <br>等級: 2 <br>屬性: 地 <br>種族: 獸族 <br>攻: 0
+          <br>守: 2100 <br> <br>效果說明:
+          <br>小兔子最喜歡這樹樁。經常爬上去向四處張望。童話動物之森有好多個性豐富可愛的動物們。那邊發現樹樁後不由自主就想要坐下來的你！來，跟著小兔子一塊兒去尋找童話動物朋友吧♪ <br><br><b>平均價格:</b> 43
+          円 (NT$8.9)
+        </div>
+      </div>
+
+
+      <div class="card-item">
+        <div class="card-images">
+          <img src="https://salix5.github.io/query-data/pics/33318980.jpg" alt="圖片">
+        </div>
+        <div class="card-text">
+          <p><strong>1 張</strong></p>
+          <br>中文名: 暗黑騎士蓋亞士兵 <br>日文名: 暗黒騎士ガイアソルジャー <br>卡號: 33318980 <br>類型: 怪獸/效果 <br>等級: 8 <br>屬性: 闇 <br>種族: 戰士族 <br>攻:
+          2600 <br>守: 2100 <br> <br>效果說明:
+          <br>這個卡名的①②③效果1回合各能使用1次。①：解放我方場上1隻龍族融合怪獸可以發動。此卡從手牌特殊召喚。此效果在對手回合也能發動。②：此卡特殊召喚成功的場合，以場上1隻攻擊表示怪獸為對象可以發動。那隻怪獸變成守備表示。③：解放此卡可以發動。從牌組將「暗黑騎士蓋亞士兵」以外的1隻等級7以上的戰士族怪獸加入手牌。
+          <br><br><b>平均價格:</b> 183 円 (NT$37.88)
+        </div>
+      </div>
+
+    </div> -->
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hint.js') }}"></script>
+<script src="{{ url_for('static', filename='js/all.js') }}"></script>
+{% endblock %}

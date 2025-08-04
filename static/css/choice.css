@@ -1,0 +1,29 @@
+#choiceContainer {
+    position: relative;
+    display: inline-block;
+}
+
+#choiceImage {
+    display: block;
+    width: 1000px;
+    height: auto;
+}
+
+.bbox {
+    position: absolute;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.bbox:hover {
+    border-color: red;
+}
+
+#hoverPreview {
+    position: absolute;
+    display: none;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    width: 200px;
+}

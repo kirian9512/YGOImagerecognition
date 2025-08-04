@@ -1,0 +1,113 @@
+{% extends "index.html" %}
+
+{% block title %}單張顯示{% endblock %}
+
+{% block filter %}{% endblock %}
+
+{% block content %}
+<div id="cardResult">
+    <p style="color:#00e0ff; font-size: 20px;">🔍 正在辨識中，請稍候...</p>
+</div>
+
+<style>
+    main.page-one {
+        background: linear-gradient(135deg, #181c2f 0%, #2d3350 30%, #232946 50%, #1a1a2e 100%);
+        color: #dff9ff;
+        font-family: "Orbitron", sans-serif;
+        height: 1500%;
+        padding: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.onload = () => {
+        const base64 = sessionStorage.getItem('uploadedImage');
+        if (!base64) {
+            console.log("⚠️ 沒有圖片可辨識");
+            return;
+        }
+
+        console.log("📤 發送辨識請求...");
+
+        const byteString = atob(base64.split(',')[1]);
+        const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], 'upload.jpg', { type: mimeString });
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/match_one', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const result = document.getElementById('cardResult');
+            if (!result) return;
+
+            if (data.images_html && data.text_html) {
+                result.innerHTML = `
+                    <h2 style="padding: 0rem 0rem 1.5rem 2rem; font-size: large;">這張卡片的資訊</h2>
+                    <div class="card-list single-column">
+                      <div class="card-item">
+                        <div class="card-images">
+                          ${data.images_html}
+                        </div>
+                        <div class="card-text" id="textBlock">
+                          ${data.text_html}
+                          <i id="priceLoading" style="color:gray;">🔍 正在查詢價格...</i>
+                        </div>
+                      </div>
+                    </div>
+                `;
+
+                if (data.card_name_jp) {
+                    fetch('/get_price', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ card_name_jp: data.card_name_jp })
+                    })
+                    .then(res => res.json())
+                    .then(priceData => {
+                        const textBlock = document.getElementById('textBlock');
+                        const priceLoading = document.getElementById('priceLoading');
+                        if (textBlock && priceData.price_html) {
+                            if (priceLoading) priceLoading.remove();
+                            textBlock.innerHTML += priceData.price_html;
+                        }
+                    })
+                    .catch(err => {
+                        console.warn("⚠️ 價格查詢失敗", err);
+                        const priceLoading = document.getElementById('priceLoading');
+                        if (priceLoading) {
+                            priceLoading.innerHTML = "⚠️ 價格查詢失敗";
+                            priceLoading.style.color = "orange";
+                        }
+                    });
+                }
+            } else if (data.error) {
+                result.innerHTML = `<span style="color:red;">${data.error}</span>`;
+            } else {
+                result.innerHTML = `<span style="color:red; font-size: 20px;">❌ 辨識失敗，請重試</span>`;
+            }
+
+            sessionStorage.removeItem('uploadedImage');
+        })
+        .catch(err => {
+            console.error('❌ 發送資料失敗', err);
+            const result = document.getElementById('cardResult');
+            if (result) result.innerHTML = '❌ 發送資料失敗';
+        });
+    };
+</script>
+{% endblock %}

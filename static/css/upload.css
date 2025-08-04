@@ -1,0 +1,94 @@
+.upload-button-one {
+  background: linear-gradient(45deg, #33ffff, #0099cc);
+  /* color: #001a1a; */
+}
+.upload-button-all {
+  background: linear-gradient(45deg, #7f7fff, #2a0a43);
+  color: #fff;
+}
+.upload-button-choice {
+  background: linear-gradient(45deg, #00ffb3, #0a4332);
+  /* color: #000; */
+}
+.upload-button-one,
+.upload-button-all,
+.upload-button-choice {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: auto;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  color: #000000;
+}
+
+.upload-block button:hover {
+  transform: translateY(-3px);
+  color: #ffffff;
+}
+
+.upload-button-one:hover {
+  background: linear-gradient(45deg, #0099cc, #33ffff);
+  box-shadow: 0 8px 15px rgba(0, 255, 255, 0.7);
+}
+.upload-button-all:hover {
+  background: linear-gradient(45deg, #2a0a43, #7f7fff);
+  box-shadow: 0 8px 15px rgba(183, 0, 255, 0.7);
+}
+.upload-button-choice:hover {
+  background: linear-gradient(45deg, #0a4332, #00ffb3);
+  box-shadow: 0 8px 15px rgba(0, 255, 162, 0.7);
+}
+
+.progress-bar-one,
+.progress-bar-all,
+.progress-bar-choice {
+  height: 10px;
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 5px;
+}
+
+.progress-bar-one {
+  background: linear-gradient(90deg, #33ffff, #0099cc);
+  box-shadow: 0 0 6px #33ffff;
+}
+.progress-bar-all {
+  background: linear-gradient(90deg, #7f7fff, #2a0a43);
+  box-shadow: 0 0 6px #7f7fff;
+}
+.progress-bar-choice {
+  background: linear-gradient(90deg, #00ffb3, #0a4332);
+  box-shadow: 0 0 6px #00ffb3;
+}
+
+.progress-bar-container-one,
+.progress-bar-container-all,
+.progress-bar-container-choice {
+  display: none;
+  width: 100%;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.preview-image {
+  max-height: 100px;
+  display: block;
+  border-radius: 12px;
+  object-fit: contain;
+  margin-top: 10px;
+}
+
+.fade-in {
+  animation: fadeIn 1.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
